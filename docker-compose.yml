@@ -1,0 +1,37 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # `base` est le nom du service, donc le nom d'hôte sur le réseau Compose.
+      # `localhost` désignerait le conteneur de l'API lui-même : c'est le
+      # blocage numéro un de cet exercice.
+      DATABASE_URL: postgresql+psycopg://postgres:motdepasse@base:5432/jeux
+      CLE_SECRETE: ${CLE_SECRETE:-cle_de_developpement_a_remplacer}
+      ENVIRONNEMENT: developpement
+      ORIGINES_AUTORISEES: http://localhost:5173
+    depends_on:
+      base:
+        # `depends_on` seul attend que le conteneur démarre, pas qu'il soit
+        # prêt. PostgreSQL met quelques secondes à accepter des connexions.
+        condition: service_healthy
+
+  base:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: motdepasse
+      POSTGRES_DB: jeux
+    ports:
+      - "5432:5432"
+    volumes:
+      # Sans volume, `docker compose down` détruit toutes les données.
+      - donnees:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  donnees:

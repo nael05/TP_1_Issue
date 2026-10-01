@@ -1,0 +1,26 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "__pycache__"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "T20"]
+ignore = [
+    "B008",   # Depends() en valeur par défaut : c'est l'idiome FastAPI.
+    "E501",   # longueur des lignes, gérée par le formateur.
+    # Les trois règles suivantes proposent des syntaxes récentes de Python.
+    # On garde volontairement la forme enseignée dans le cours, qui est aussi
+    # celle de la documentation de FastAPI et de Pydantic.
+    "UP017",  # datetime.UTC plutôt que timezone.utc (séance 2).
+    "UP042",  # enum.StrEnum plutôt que class X(str, Enum) (séance 3).
+    "UP046",  # class Page[T] plutôt que Generic[T] + TypeVar (séance 3).
+]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["T20"]   # un script en ligne de commande a le droit d'afficher.
+"tests/*" = ["T20"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["ignore::DeprecationWarning"]
