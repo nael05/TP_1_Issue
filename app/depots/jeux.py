@@ -165,7 +165,7 @@ def statistiques(session: Session) -> dict:
     return {
         "nombre": nombre or 0,
         # `func.avg` renvoie un Decimal sur PostgreSQL : le `float()` est requis.
-        "moyenne": round(float(moyenne), 2),
+        "moyenne": round(float(moyenne), 2) if moyenne is not None else 0.0,
         "meilleure_note": meilleure,
         "par_genre": {genre: compte for genre, compte in par_genre},
     }
