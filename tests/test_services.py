@@ -216,3 +216,9 @@ def test_statistiques(session, catalogue):
     assert stats["moyenne"] == pytest.approx(8.2)
     assert stats["meilleure_note"] == 9
     assert stats["par_genre"]["RPG"] == 2
+
+
+def test_statistiques_catalogue_vide(session):
+    stats = service.statistiques(session)
+    assert stats["nombre"] == 0
+    assert stats["moyenne"] == 0.0
